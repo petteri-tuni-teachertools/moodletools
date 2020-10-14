@@ -8,7 +8,8 @@
 
 shfile=run`date '+%FT%h%m%s.sh'`
 export x=0
-find $1 -name "*.pdf"  | while IFS= read -r line; do export x=`expr $x + 1` ; echo "cp \"$line\" $2/$x.pdf"; done > runthis.sh
+touch $2/report.txt
+find $1 -name "*.pdf"  | while IFS= read -r line; do export x=`expr $x + 1` ; echo "cp \"$line\" $2/$x.pdf"; echo "$x ### $line" >> $2/report.txt;  done > runthis.sh
 sh runthis.sh
-rm runthis.sh
+cp runthis.sh $2/.
 

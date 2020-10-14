@@ -8,5 +8,8 @@
 
 shfile=run`date '+%FT%h%m%s.sh'`
 export x=0
-find $1 -name "*.html"  | while IFS= read -r line; do export x=`expr $x + 1` ; echo "cp \"$line\" $2/$x.html"; done > runthis.sh
+touch $2/report.txt
+find $1 -name "*.html"  | while IFS= read -r line; do export x=`expr $x + 1` ; export y=$(printf "%02d" $x); echo "cp \"$line\" $2/$y.html"; echo "$y ### $line" >> $2/report_$2.txt; done > runthis.sh
 sh runthis.sh
+cp runthis.sh $2/.
+
