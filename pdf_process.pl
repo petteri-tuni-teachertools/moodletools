@@ -23,7 +23,7 @@ my @data_list = split("[\n\r]", $data);
 while (my $line = shift @data_list) {
 	my $name;
 	# print "LINE: $line \n";
-	if ($line =~ m,$src_dir/(.*)_\d,) {
+	if ($line =~ m,$src_dir/([^_]*)_\d,) {
 		$name = $1;
 		$name =~ s/ /_/g;
 	}
@@ -41,7 +41,7 @@ for $name (sort keys %result_hash) {
 	my $file = $result_hash{$name};
 	$i++;
 	qx(cp "$file" $dst_ano/$i.pdf);
-	qx(cp "$file" $dst_nm/$i_$name.pdf);
+	qx(cp "$file" "$dst_nm/$i_$name.pdf");
 }
 
 exit;
