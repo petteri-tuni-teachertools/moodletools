@@ -19,6 +19,7 @@ my $dst_nm = "$dst_dir/nm";
 my $data = qx(find $src_dir -name "*.pdf");
 
 my %result_hash;
+my %file_cnt_hash;
 my @data_list = split("[\n\r]", $data);
 while (my $line = shift @data_list) {
 	my $name;
@@ -30,7 +31,13 @@ while (my $line = shift @data_list) {
 	$name and print "NAME: $name\n";
 	$name or print "LINE PROBLEM: $line\n";
 
-	$result_hash{$name} = $line;
+	if (exists $file_cnt_hash{$name}) {
+		$file_cnt_hash{$name}++;
+	} else {
+		$file_cnt_hash{$name} = 1;
+	}
+	my $key_value = $name.'-'.$file_cnt_hash{$name};
+	$result_hash{$key_value} = $line;
 };
 qx(mkdir $dst_dir);
 qx(mkdir $dst_ano);
