@@ -99,9 +99,8 @@ sub read_keyfile {
 		my $active = ($kandi eq $tag)?"YES $cond":'NO ';
 		if ($kandi eq $tag) {
 			push @active_list, $cond;
-		}
-		
-        	debug_print("$active $line");
+		}		
+        debug_print("$active $line");
 	}
 	debug_print(@active_list);
 }
