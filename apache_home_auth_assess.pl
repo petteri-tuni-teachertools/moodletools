@@ -2,6 +2,9 @@
 use LWP::UserAgent;
 use English;
 
+my $site_url = 'https://homepages.tuni.fi';
+my $alias;
+
 my $arg_student = $ARGV[0];
 $arg_student or $arg_student = 'tunnus24';
 
@@ -24,8 +27,11 @@ if ($arg_student =~ m/file:(.*)/) {
 		my $line = $_;
 		$line =~ s/[\r\n]//g;
 		my ($mail, $curuser);
-		($mail, $curuser, undef) = split('[ \t]', $line);
-		$curuser and assess($curuser, $mail, $i);
+		($mail, $curuser, undef) = split(';', $line);
+		if($mail =~ m/(.*)\@tuni.fi/) {
+			$alias = $1;
+			assess($mail, $curuser, $alias, $i);
+		}
 	}
 } else {
 	assess($arg_student, $arg_student);
@@ -41,18 +47,24 @@ sub LWP::UserAgent::get_basic_credentials {
 }
 
 sub assess {
-	my $student = shift;
 	my $mail = shift;
+	my $uid = shift;
+	my $alias = shift;
 	my $num = shift;
 
-my $open1 = open_site("http://home.tamk.fi/~$student/index.html" );
-my $open2 = open_site("http://home.tamk.fi/~$student/secure/index.html" );
-my $auth1 = auth_site("http://home.tamk.fi/~$student/secure/index.html", $auth_uid, $student.$secret );
+	my $student = $uid;
+
+my $base_url = $site_url."/$alias";
+my $pass = $uid.$secret;
+
+my $open1 = open_site($base_url."/index.html" );
+my $open2 = open_site($base_url."/secure/index.html" );
+my $auth1 = auth_site($base_url."/secure/index.html", $auth_uid, $pass );
 
 print "================================================\n";
-print "## $mail # $student ($num) ------------\n";
+print "## $base_url # $mail # $uid # $pass ($num) ------------\n";
 
-if ($open1 =~ m/$student/) {
+if ($open1 =~ m/($student|home)/i) {
 	print "$student - OPEN 1 SUCCESS\n";
 } else {
 	print "$student - OPEN 1 FAILED\n";
@@ -66,7 +78,7 @@ if ($open2 =~ m/unauthori/i) {
 	#print "$student - OPEN 2: $open2\n";
 }
 
-if ($auth1 =~ m/$student/i) {
+if ($auth1 =~ m/(($student|alias|classif))/i) {
 	print "$student - AUTH 1 SUCCESS\n";
 } else {
 	print "$student - AUTH 1 FAILED\n";
