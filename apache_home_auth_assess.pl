@@ -14,8 +14,20 @@ $auth_uid or $auth_uid = 'cyber';
 my $secret = $ARGV[2];
 $secret or $secret = 'verysecret';
 
+my $test_text1 = 'Personal home page        ';
+my $test_text2 = 'Secure page protected     ';
+my $test_text3 = 'Secure page authentication';
+
+my $ok_text = "SUCCESS";
+my $fail_text = "TRY AGAIN";
+
 my $pass = '';
 my $uid = '';
+
+print "=======================================\n";
+print "Date: ".localtime()."\n";
+print "Target site: $site_url\n";
+print "\n"; 
 
 if ($arg_student =~ m/file:(.*)/) {
 	my $filename = $1;
@@ -54,40 +66,36 @@ sub assess {
 
 	my $student = $uid;
 
-my $base_url = $site_url."/$alias";
-my $pass = $uid.$secret;
-
-my $open1 = open_site($base_url."/index.html" );
-my $open2 = open_site($base_url."/secure/index.html" );
-my $auth1 = auth_site($base_url."/secure/index.html", $auth_uid, $pass );
-
-print "================================================\n";
-print "## $base_url # $mail # $uid # $pass ($num) ------------\n";
-
-if ($open1 =~ m/($student|home)/i) {
-	print "$student - OPEN 1 SUCCESS\n";
-} else {
-	print "$student - OPEN 1 FAILED\n";
-	#print "$student - OPEN 1: $open1\n";
-}
-
-if ($open2 =~ m/unauthori/i) {
-	print "$student - OPEN 2 SUCCESS\n";
-} else {
-	print "$student - OPEN 2: FAILED\n";
-	#print "$student - OPEN 2: $open2\n";
-}
-
-if ($auth1 =~ m/(($student|alias|classif))/i) {
-	print "$student - AUTH 1 SUCCESS\n";
-} else {
-	print "$student - AUTH 1 FAILED\n";
-	#print "$student - AUTH 1: $auth1\n";
-}
-
-#print "$open1 \n";
-#print "$open2 \n";
-#print "$auth1 \n";
+	my $base_url = $site_url."/$alias";
+	my $pass = $uid.$secret;
+	
+	my $open1 = open_site($base_url."/index.html" );
+	my $open2 = open_site($base_url."/secure/index.html" );
+	my $auth1 = auth_site($base_url."/secure/index.html", $auth_uid, $pass );
+	
+	print "----------------------------------------------------\n";
+	#print "## $base_url # $mail # $uid # $pass ($num) ------------\n";
+	print "## $base_url ($num) \n";
+	
+	
+	if ($open1 =~ m/($student|home)/i) {
+		print "$student - $test_text1: $ok_text\n";
+	} else {
+		print "$student - $test_text1: $fail_text\n";
+	}
+	
+	if ($open2 =~ m/unauthori/i) {
+		print "$student - $test_text2: $ok_text\n";
+	} else {
+		print "$student - $test_text2: $fail_text\n";
+	}
+	
+	if ($auth1 =~ m/(($student|alias|classif))/i) {
+		print "$student - $test_text3: $ok_text\n";
+	} else {
+		print "$student - $test_text3: $fail_text\n";
+	}
+	print "\n";
 }
 
 sub open_site {
